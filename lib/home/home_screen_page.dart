@@ -11,21 +11,27 @@ import 'package:flutter_riverpod/src/provider.dart';
 import 'dart:developer' as developer;
 
 class HomeScreenPage extends HookWidget{
-  List<List<BoardState>> gridState = [];
+
   String TAG = "HomeScreenPage";
+  //Identify if pawn was dropped on chess board
   bool _isPawnDropped = false;
-  String _pawn = 'pawn';
+  late String _pawn;
+
   bool _isDragInProgress = false;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Consumer(
       builder: (builder, watch, child){
+        _pawn = watch(homeScreenProvider).getPawnName;
+
         final streamValue = watch(homeScreenProvider).willAcceptStream;
         streamValue.listen((value) {
           developer.log(TAG, name:" Stream value has changed "+ value.toString());
           _isDragInProgress = value;
         });
+
         if(streamValue.hasListener && streamValue.hasValue){
           developer.log(TAG, name:" Stream value has changed "+ streamValue.value.toString());
         }
@@ -57,7 +63,9 @@ class HomeScreenPage extends HookWidget{
                           ),
                         ],
                       ),
+                      //Prepare chess Grid in UI
                       GridScreen(),
+
                       StreamBuilder(
                         initialData: false,
                         stream: context.read(homeScreenProvider).willAcceptStream,
@@ -70,16 +78,16 @@ class HomeScreenPage extends HookWidget{
                               data: _pawn,
                               //This will be the original image of the pawn
                               child: Container(
-                                height: 165.0,
-                                width: 165.0,
+                                height: 55.0,
+                                width: 55.0,
                                 child: Center(
                                   child: Image.asset(unSelectedPawnPath),
                                 ),
                               ),
                               //This will be the image that would be getting displayed when the pawn is dragged
                               feedback: Container(
-                                height: 165.0,
-                                width: 165.0,
+                                height: 55.0,
+                                width: 55.0,
                                 child: Center(
                                   child: Image.asset(selectedPawnPath),
                                 ),
@@ -99,6 +107,7 @@ class HomeScreenPage extends HookWidget{
                           );
                         }
                       ),
+
                       /*Visibility(
                         key: Key("1"),
                         visible: !_isPawnDropped,
@@ -134,6 +143,7 @@ class HomeScreenPage extends HookWidget{
 
                         ),
                       ),*/
+
                       //Drag target container
                       StreamBuilder(
                           initialData: false,
@@ -159,9 +169,9 @@ class HomeScreenPage extends HookWidget{
                                                 : 'assets/bo.png'),
                                           );
                                         },
-                                        /*onWillAccept: (data) {
+                                        onWillAccept: (data) {
                                           return data == _pawn;
-                                        },*/
+                                        },
                                         onAccept: (data) {
                                           developer.log(TAG , name: "Data $data");
                                           _isPawnDropped = true;
@@ -183,87 +193,5 @@ class HomeScreenPage extends HookWidget{
       },
     );
 
-  }
-
-  Widget _buildGameBody(List<List<BoardState>> gridState) {
-    int gridStateLength = gridState.length;
-    return Column(
-        children: <Widget>[
-          AspectRatio(
-            aspectRatio: 1.0,
-            child: Container(
-              padding: const EdgeInsets.all(8.0),
-              margin: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-              decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 2.0)
-              ),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: gridStateLength,
-                  mainAxisSpacing: kDefaultPadding,
-                  crossAxisSpacing: kDefaultPadding,
-                ),
-                itemBuilder: (context, index) => _buildGridItems(context, index, gridStateLength),
-                itemCount: gridStateLength * gridStateLength,
-              ),
-            ),
-          ),
-        ]);
-  }
-
-  Widget _buildGridItems(BuildContext context, int index, int gridStateLength) {
-    int x, y = 0;
-    x = (index / gridStateLength).floor();
-    y = (index % gridStateLength);
-    return GestureDetector(
-      onTap: () {
-
-        BoardState bookingState = getCurrentBoardState(x,y);
-        switch(bookingState){
-          case BoardState.WHITE:{
-
-          }
-          break;
-          case BoardState.BLACK:{
-
-          }
-          break;
-
-        }
-      },
-      child: GridTile(
-        child: Container(
-          decoration: BoxDecoration(
-              border: Border.all(color: Colors.black, width: 0.5)
-          ),
-          child: Center(
-            child: _buildGridItem(x, y),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridItem(int x, int y) {
-    switch (gridState[x][y]) {
-      case BoardState.BLACK:
-        return Container(
-          color: Colors.black45,
-        );
-        break;
-      case BoardState.WHITE:
-        return Container(
-          color: Colors.white60,
-          //child: Text(gridState[x][y].toString()),
-        );
-        break;
-      default:
-        return Text(gridState[x][y].toString());
-    }
-  }
-
-
-  BoardState getCurrentBoardState(int x, int y){
-    return gridState[x][y];
   }
 }

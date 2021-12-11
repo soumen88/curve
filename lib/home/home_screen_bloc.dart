@@ -11,6 +11,9 @@ class HomeScreenBloc extends ChangeNotifier{
   int rows = 0;
   int columns = 0;
   bool isGridCreated = false;
+  String _pawn = "pawn";
+
+  String get getPawnName => _pawn;
   late BoardStatus boardStatusState ;
   BehaviorSubject<bool> willAcceptStream = new BehaviorSubject<bool>();
 

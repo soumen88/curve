@@ -12,18 +12,22 @@ class GridScreen extends HookWidget{
   List<List<BoardState>> gridState = [];
   int gridStateLength = 0;
   String TAG = "GridScreen";
+  late String _pawn;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return Consumer(
       builder: (builder, watch, child){
         final currentState = watch(homeScreenProvider).boardStatusState;
+        _pawn = watch(homeScreenProvider).getPawnName;
+
         if(currentState != null){
           gridState.clear();
           gridState = List.from(currentState.currentBoardState);
           developer.log(TAG , name: "Grid size "+ gridState.length.toString());
           gridStateLength = gridState.length;
         }
+
         return Column(
             children: <Widget>[
               AspectRatio(
@@ -55,7 +59,7 @@ class GridScreen extends HookWidget{
     int x, y = 0;
     x = (index / gridStateLength).floor();
     y = (index % gridStateLength);
-    Coordinate coordinate = new Coordinate(x, y);
+    //Coordinate coordinate = new Coordinate(x, y);
     return GestureDetector(
       onTap: () {
 
@@ -78,14 +82,14 @@ class GridScreen extends HookWidget{
               border: Border.all(color: Colors.black, width: 0.5)
           ),
           child: Center(
-            child: _buildGridItem(x, y, coordinate),
+            child: _buildGridItem(x, y),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildGridItem(int x, int y, Coordinate coordinate) {
+  Widget _buildGridItem(int x, int y) {
     switch (gridState[x][y]) {
       case BoardState.BLACK:
         return DragTarget<String>(
@@ -95,10 +99,10 @@ class GridScreen extends HookWidget{
               );
             },
             onWillAccept: (data) {
-              return data == coordinate;
+              return data == _pawn;
             },
             onAccept: (data) {
-              developer.log(TAG , name: "Data $data");
+              developer.log(TAG , name: "Data $data with $x and $y");
             },
             hitTestBehavior: HitTestBehavior.deferToChild
         );
@@ -111,10 +115,10 @@ class GridScreen extends HookWidget{
               );
             },
             onWillAccept: (data) {
-              return data == coordinate;
+              return data == _pawn;
             },
             onAccept: (data) {
-              developer.log(TAG , name: "Data $data");
+              developer.log(TAG , name: "Data $data with $x and $y");
             },
             hitTestBehavior: HitTestBehavior.deferToChild
         );
