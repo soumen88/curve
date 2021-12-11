@@ -113,15 +113,61 @@ class HomeScreenBloc extends ChangeNotifier{
       isRowChange = true;
     }
 
+
+
     //Keep the column data same
     if(isRowChange){
+      //create temp variables which preserve old and new states of rows
+      List<BoardState> currentBoardColumn = boardGridState[rowId];
 
+      //find the index of pawn location in current row
+      int index = currentBoardColumn.indexOf(BoardState.PAWN_LOCATION);
+      //check if the pawn is on the edge of the board
+      if(columnId == 0 || columnId == 7){
+        developer.log(TAG, name: "Returning because pawn is at the edge of the board");
+        return;
+      }
+
+      //Saving current board state
+      BoardState newboardState = currentBoardColumn[newColumnId];
+      BoardState updated = BoardState.BLACK;
+
+      //Since in chess board black and white are placed alternatively if the current board state is
+      // white then below that on the same index it would be white
+      if(newboardState == BoardState.WHITE){
+        updated = BoardState.BLACK;
+      }
+      else if(newboardState == BoardState.BLACK){
+        updated = BoardState.WHITE;
+      }
+
+      //replace the index with updated one
+      currentBoardColumn.removeAt(index);
+      currentBoardColumn.insert(index, updated);
+
+      currentBoardColumn.removeAt(newColumnId);
+      currentBoardColumn.insert(newColumnId, BoardState.PAWN_LOCATION);
+      developer.log(TAG, name: "Index of $index");
+
+
+      boardGridState.removeAt(rowId);
+      boardGridState.insert(rowId, currentBoardColumn);
+
+      playerCurrentCoordinates = new Coordinate(rowId, newColumnId);
     }
     //Keep the row data same
     else if(isColumnChange){
+      List<BoardState> currentBoardRow = boardGridState[rowId];
+      //find the index of pawn location in current row
+      int index = currentBoardRow.indexOf(BoardState.PAWN_LOCATION);
+
+      //check if the pawn is on the edge of the board
+      if(rowId == 0 || rowId == 7){
+        developer.log(TAG, name: "Returning because pawn is at the edge of the board");
+        return;
+      }
       //create temp variables which preserve old and new states of rows
       List<BoardState> newBoardRow = boardGridState[newRowId];
-      List<BoardState> currentBoardRow = boardGridState[rowId];
 
       //Saving current board state
       BoardState currentboardState = newBoardRow[columnId];
@@ -135,8 +181,7 @@ class HomeScreenBloc extends ChangeNotifier{
         updated = BoardState.WHITE;
       }
 
-      //find the index of pawn location in current row
-      int index = currentBoardRow.indexOf(BoardState.PAWN_LOCATION);
+
       //replace the index with updated one
       currentBoardRow.removeAt(index);
       currentBoardRow.insert(index, updated);
