@@ -27,6 +27,7 @@ class HomeScreenPage extends HookWidget{
         _pawn = watch(homeScreenProvider).getPawnName;
         final pawnAngle = watch(pawnAngleProvider);
         final streamValue = watch(homeScreenProvider).willAcceptStream;
+        final currentDirection = watch(homeScreenProvider).currentDirection;
         streamValue.listen((value) {
           developer.log(TAG, name:" Stream value has changed "+ value.toString());
           _isPawnDropped = value;
@@ -50,18 +51,25 @@ class HomeScreenPage extends HookWidget{
                       StreamBuilder(
                           stream: context.read(homeScreenProvider).willAcceptStream,
                           builder:  (context, snapshot){
-                            if(snapshot.data != null && snapshot.hasData && snapshot.data! == true){
+                            if(snapshot.data != null && snapshot.hasData && snapshot.data! == true && currentDirection != null){
                               return pawnAngle.when(
                                   data: (data) {
                                     currentAngle = data!;
-                                    return Container(
-                                      height: 155.0,
-                                      width: 155.0,
-                                      child:
-                                      RotationTransition(
-                                        turns: new AlwaysStoppedAnimation( data! / 360),
-                                        child: Image.asset(unSelectedPawnPath),
-                                      ),
+                                    return Column(
+                                      children: [
+                                        if(data != null)
+                                        Container(
+                                          height: 155.0,
+                                          width: 155.0,
+                                          child:
+                                          RotationTransition(
+                                            turns: new AlwaysStoppedAnimation( data / 360),
+                                            child: Image.asset(unSelectedPawnPath),
+                                          ),
+                                        ),
+                                        if(currentDirection != null)
+                                        Text("$currentDirection")
+                                      ],
                                     );
                                   },
                                   loading: (){
@@ -136,6 +144,8 @@ class HomeScreenPage extends HookWidget{
                                       tap: (){
                                         developer.log(TAG, name:"Left button was tapped");
                                         context.read(pawnAngleProvider.notifier).rotateLeft();
+                                        int tempAngle = currentAngle - 90;
+                                        context.read(homeScreenProvider).updateDirection(tempAngle);
                                       },
                                       buttonText: "Left"
                                   ),
@@ -143,6 +153,8 @@ class HomeScreenPage extends HookWidget{
                                       tap: (){
                                         developer.log(TAG, name:"Right button was tapped");
                                         context.read(pawnAngleProvider.notifier).rotateRight();
+                                        int tempAngle = currentAngle + 90;
+                                        context.read(homeScreenProvider).updateDirection(tempAngle);
                                       },
                                       buttonText: "Right"
                                   ),

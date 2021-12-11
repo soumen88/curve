@@ -17,7 +17,7 @@ class HomeScreenBloc extends ChangeNotifier{
   String get getPawnName => _pawn;
   late BoardStatus boardStatusState;
   late Coordinate playerCurrentCoordinates;
-  late Directions currentDirection;
+  Directions? currentDirection;
   BehaviorSubject<bool> willAcceptStream = new BehaviorSubject<bool>();
 
   HomeScreenBloc(){
@@ -83,25 +83,27 @@ class HomeScreenBloc extends ChangeNotifier{
 
   void traverseGrid(int currentAngle ){
     int rowId = playerCurrentCoordinates.xPosition;
+    int newRowId = playerCurrentCoordinates.xPosition;
     int columnId = playerCurrentCoordinates.yPosition;
+    int newColumnId = playerCurrentCoordinates.yPosition;
     bool isRowChange = false;
     bool isColumnChange = false;
-
+    List<List<BoardState>> boardGridState = boardStatusState.currentBoardState;
     if(currentAngle == 0){
       currentDirection = Directions.NORTH;
-      columnId++;
+      newRowId = rowId - 1;
     }
     else if(currentAngle == -90 || currentAngle == 270){
-      currentDirection = Directions.EAST;
-      rowId--;
+      currentDirection = Directions.WEST;
+      newColumnId = columnId - 1;
     }
     else if(currentAngle == 90 || currentAngle == -270){
-      currentDirection = Directions.WEST;
-      rowId++;
+      currentDirection = Directions.EAST;
+      newColumnId = columnId + 1;
     }
     else if(currentAngle == 180 || currentAngle == -180){
       currentDirection = Directions.SOUTH;
-      columnId--;
+      newRowId = rowId + 1;
     }
 
     if(currentDirection == Directions.SOUTH || currentDirection == Directions.NORTH){
@@ -111,17 +113,71 @@ class HomeScreenBloc extends ChangeNotifier{
       isRowChange = true;
     }
 
-    List<List<BoardState>> boardGridState = boardStatusState.currentBoardState;
-    List<BoardState> columnBoardState = boardGridState[rowId];
-    columnBoardState.removeAt(columnId);
-    columnBoardState.insert(columnId, BoardState.PAWN_LOCATION);
-    boardGridState.removeAt(rowId);
-    boardGridState.insert(rowId, columnBoardState);
-    developer.log(TAG, name: "Picked board state as $rowId and $columnId");
+    //Keep the column data same
+    if(isRowChange){
+
+    }
+    //Keep the row data same
+    else if(isColumnChange){
+      //create temp variables which preserve old and new states of rows
+      List<BoardState> newBoardRow = boardGridState[newRowId];
+      List<BoardState> currentBoardRow = boardGridState[rowId];
+
+      //Saving current board state
+      BoardState currentboardState = newBoardRow[columnId];
+      BoardState updated = BoardState.BLACK;
+      //Since in chess board black and white are placed alternatively if the current board state is
+      // white then below that on the same index it would be white
+      if(currentboardState == BoardState.WHITE){
+        updated = BoardState.BLACK;
+      }
+      else if(currentboardState == BoardState.BLACK){
+        updated = BoardState.WHITE;
+      }
+
+      //find the index of pawn location in current row
+      int index = currentBoardRow.indexOf(BoardState.PAWN_LOCATION);
+      //replace the index with updated one
+      currentBoardRow.removeAt(index);
+      currentBoardRow.insert(index, updated);
+      developer.log(TAG, name: "Index of $index");
+
+      newBoardRow.removeAt(columnId);
+      newBoardRow.insert(columnId, BoardState.PAWN_LOCATION);
+      boardGridState.removeAt(newRowId);
+      boardGridState.insert(newRowId, newBoardRow);
+
+      boardGridState.removeAt(rowId);
+      boardGridState.insert(rowId, currentBoardRow);
+
+      developer.log(TAG, name: "Picked board state as $rowId and $columnId");
+      playerCurrentCoordinates = new Coordinate(newRowId, columnId);
+
+    }
     boardStatusState = new BoardStatus(boardGridState);
-    playerCurrentCoordinates = new Coordinate(rowId, columnId);
     notifyListeners();
 
+  }
+
+  void updateDirection(int currentAngle){
+    developer.log(TAG, name: "Passed current angle as $currentAngle");
+    if(currentAngle == 0 || currentAngle == 360){
+      currentDirection = Directions.NORTH;
+
+    }
+    else if(currentAngle == -90 || currentAngle == 270){
+      currentDirection = Directions.EAST;
+
+    }
+    else if(currentAngle == 90 || currentAngle == -270){
+      currentDirection = Directions.WEST;
+
+    }
+    else if(currentAngle == 180 || currentAngle == -180){
+      currentDirection = Directions.SOUTH;
+    }
+
+    notifyListeners();
   }
 
 }
