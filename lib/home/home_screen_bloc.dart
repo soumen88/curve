@@ -123,8 +123,10 @@ class HomeScreenBloc extends ChangeNotifier{
       //find the index of pawn location in current row
       int index = currentBoardColumn.indexOf(BoardState.PAWN_LOCATION);
       //check if the pawn is on the edge of the board
-      if(columnId == 0 || columnId == 7){
+      if((columnId == 0 && currentDirection == Directions.WEST) || (columnId == 7 && currentDirection == Directions.EAST)){
         developer.log(TAG, name: "Returning because pawn is at the edge of the board");
+        playerCurrentCoordinates.isOnEdge = true;
+        notifyListeners();
         return;
       }
 
@@ -154,6 +156,7 @@ class HomeScreenBloc extends ChangeNotifier{
       boardGridState.insert(rowId, currentBoardColumn);
 
       playerCurrentCoordinates = new Coordinate(rowId, newColumnId);
+      playerCurrentCoordinates.isOnEdge = false;
     }
     //Keep the row data same
     else if(isColumnChange){
@@ -162,8 +165,10 @@ class HomeScreenBloc extends ChangeNotifier{
       int index = currentBoardRow.indexOf(BoardState.PAWN_LOCATION);
 
       //check if the pawn is on the edge of the board
-      if(rowId == 0 || rowId == 7){
+      if((rowId == 0 && currentDirection == Directions.NORTH) || (rowId == 7 && currentDirection == Directions.SOUTH)){
         developer.log(TAG, name: "Returning because pawn is at the edge of the board");
+        playerCurrentCoordinates.isOnEdge = true;
+        notifyListeners();
         return;
       }
       //create temp variables which preserve old and new states of rows
@@ -197,6 +202,7 @@ class HomeScreenBloc extends ChangeNotifier{
 
       developer.log(TAG, name: "Picked board state as $rowId and $columnId");
       playerCurrentCoordinates = new Coordinate(newRowId, columnId);
+      playerCurrentCoordinates.isOnEdge = false;
 
     }
     boardStatusState = new BoardStatus(boardGridState);

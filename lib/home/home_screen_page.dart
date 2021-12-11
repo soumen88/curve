@@ -18,6 +18,7 @@ class HomeScreenPage extends HookWidget{
   late String _pawn;
   int currentAngle = 0;
   bool _isDragInProgress = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,8 @@ class HomeScreenPage extends HookWidget{
         final pawnAngle = watch(pawnAngleProvider);
         final streamValue = watch(homeScreenProvider).willAcceptStream;
         final currentDirection = watch(homeScreenProvider).currentDirection;
+
+
         streamValue.listen((value) {
           developer.log(TAG, name:" Stream value has changed "+ value.toString());
           _isPawnDropped = value;
@@ -52,8 +55,10 @@ class HomeScreenPage extends HookWidget{
                           stream: context.read(homeScreenProvider).willAcceptStream,
                           builder:  (context, snapshot){
                             if(snapshot.data != null && snapshot.hasData && snapshot.data! == true && currentDirection != null){
+
                               return pawnAngle.when(
                                   data: (data) {
+                                    final currentCoordinates = watch(homeScreenProvider).playerCurrentCoordinates;
                                     currentAngle = data!;
                                     return Column(
                                       children: [
@@ -68,7 +73,19 @@ class HomeScreenPage extends HookWidget{
                                           ),
                                         ),
                                         if(currentDirection != null)
-                                        Text("$currentDirection")
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Text("$currentDirection,"),
+                                            Text("x = ${currentCoordinates.xPosition},"),
+                                            Text("y = ${currentCoordinates.yPosition}, "),
+                                            Visibility(
+                                                visible: currentCoordinates.isOnEdge,
+                                                child: Text("Pawn is at edge of board"),
+                                            )
+                                          ],
+                                        )
+
                                       ],
                                     );
                                   },
@@ -138,7 +155,7 @@ class HomeScreenPage extends HookWidget{
                           builder:  (context, snapshot) {
                             if(snapshot.data != null && snapshot.hasData && snapshot.data! == true){
                               return  Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   CustomButton(
                                       tap: (){
@@ -181,6 +198,7 @@ class HomeScreenPage extends HookWidget{
         );
       },
     );
-
   }
+
+
 }
