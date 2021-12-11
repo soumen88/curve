@@ -129,12 +129,31 @@ class GridScreen extends HookWidget{
         );
         break;
       case BoardState.PAWN_LOCATION:{
-        return Container(
-          height: 25.0,
-          width: 25.0,
-          child: Center(
-            child: Image.asset(unSelectedPawnPath),
-          ),
+        return Consumer(
+          builder: (builder, watch, child){
+            final pawnAngle = watch(pawnAngleProvider);
+            return pawnAngle.when(
+                data: (data) {
+                  return Container(
+                    height: 155.0,
+                    width: 155.0,
+                    child:
+                    RotationTransition(
+                      turns: new AlwaysStoppedAnimation( data! / 360),
+                      child: Image.asset(unSelectedPawnPath),
+                    ),
+                  );
+                },
+                loading: (){
+                  return Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: Center(child: CircularProgressIndicator())
+                  );
+                },
+                error:(e, st) => Text("Something went wrong")
+            );
+          },
         );
       }
       break;

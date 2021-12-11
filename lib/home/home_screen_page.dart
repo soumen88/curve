@@ -16,7 +16,7 @@ class HomeScreenPage extends HookWidget{
   //Identify if pawn was dropped on chess board
   bool _isPawnDropped = false;
   late String _pawn;
-
+  int currentAngle = 0;
   bool _isDragInProgress = false;
 
   @override
@@ -25,11 +25,11 @@ class HomeScreenPage extends HookWidget{
     return Consumer(
       builder: (builder, watch, child){
         _pawn = watch(homeScreenProvider).getPawnName;
-
+        final pawnAngle = watch(pawnAngleProvider);
         final streamValue = watch(homeScreenProvider).willAcceptStream;
         streamValue.listen((value) {
           developer.log(TAG, name:" Stream value has changed "+ value.toString());
-          _isDragInProgress = value;
+          _isPawnDropped = value;
         });
 
         if(streamValue.hasListener && streamValue.hasValue){
@@ -47,7 +47,39 @@ class HomeScreenPage extends HookWidget{
               child: SafeArea(
                 child: Column(
                     children: [
+                      StreamBuilder(
+                          stream: context.read(homeScreenProvider).willAcceptStream,
+                          builder:  (context, snapshot){
+                            if(snapshot.data != null && snapshot.hasData && snapshot.data! == true){
+                              return pawnAngle.when(
+                                  data: (data) {
+                                    currentAngle = data!;
+                                    return Container(
+                                      height: 155.0,
+                                      width: 155.0,
+                                      child:
+                                      RotationTransition(
+                                        turns: new AlwaysStoppedAnimation( data! / 360),
+                                        child: Image.asset(unSelectedPawnPath),
+                                      ),
+                                    );
+                                  },
+                                  loading: (){
+                                    return Container(
+                                        width: MediaQuery.of(context).size.width,
+                                        height: MediaQuery.of(context).size.height,
+                                        child: Center(child: CircularProgressIndicator())
+                                    );
+                                  },
+                                  error:(e, st) => Text("Something went wrong")
+                              );
+                            }
+                            else{
+                              return Text("Game Moves will be displayed here");
+                            }
 
+                          }
+                      ),
                       //Prepare chess Grid in UI
                       GridScreen(),
 
@@ -103,14 +135,23 @@ class HomeScreenPage extends HookWidget{
                                   CustomButton(
                                       tap: (){
                                         developer.log(TAG, name:"Left button was tapped");
+                                        context.read(pawnAngleProvider.notifier).rotateLeft();
                                       },
                                       buttonText: "Left"
                                   ),
                                   CustomButton(
                                       tap: (){
                                         developer.log(TAG, name:"Right button was tapped");
+                                        context.read(pawnAngleProvider.notifier).rotateRight();
                                       },
                                       buttonText: "Right"
+                                  ),
+                                  CustomButton(
+                                      tap: (){
+                                        developer.log(TAG, name:"Right button was tapped");
+                                        context.read(homeScreenProvider).traverseGrid(currentAngle);
+                                      },
+                                      buttonText: "Move"
                                   ),
                                 ],
                               );
