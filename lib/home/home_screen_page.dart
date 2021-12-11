@@ -11,6 +11,8 @@ import 'dart:developer' as developer;
 class HomeScreenPage extends HookWidget{
   List<List<BoardState>> gridState = [];
   String TAG = "HomeScreenPage";
+  bool _isPawnDropped = false;
+  String _pawn = 'pawn';
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -25,26 +27,85 @@ class HomeScreenPage extends HookWidget{
             padding: EdgeInsets.all(kDefaultPadding),
             child: Center(
               child: SafeArea(
-                child: Consumer(
-                    builder : (builder, watch, child){
-                      final currentState = watch(homeScreenProvider).boardStatusState;
-                      if(currentState != null){
-                        gridState.clear();
-                        gridState = List.from(currentState.currentBoardState);
-                        developer.log(TAG , name: "Grid size "+ gridState.length.toString());
+                child: Column(
+                    children: [
+                      Consumer(
+                          builder : (builder, watch, child){
+                            final currentState = watch(homeScreenProvider).boardStatusState;
+                            if(currentState != null){
+                              gridState.clear();
+                              gridState = List.from(currentState.currentBoardState);
+                              developer.log(TAG , name: "Grid size "+ gridState.length.toString());
 
-                      }
-                      if(gridState.isNotEmpty){
-                        return _buildGameBody(gridState);
-                      }
-                      else{
-                        return Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height,
-                            child: Center(child: CircularProgressIndicator())
-                        );
-                      }
-                    }
+                            }
+                            if(gridState.isNotEmpty){
+                              return _buildGameBody(gridState);
+                            }
+                            else{
+                              return Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height,
+                                  child: Center(child: CircularProgressIndicator())
+                              );
+                            }
+                          }
+                      ),
+                      Visibility(
+                        visible: !_isPawnDropped,
+                        child: Draggable<String>(
+                          // Data is the value this Draggable stores.
+                          data: _pawn,
+                          child: Container(
+                            height: 165.0,
+                            width: 165.0,
+                            child: Center(
+                              child: Image.asset('assets/chess_pawn.png'),
+                            ),
+                          ),
+                          feedback: Container(
+                            height: 165.0,
+                            width: 165.0,
+                            child: Center(
+                              child: Image.asset('assets/chess_pawn.png'),
+                            ),
+                          ),
+                          childWhenDragging: Container(),
+                        ),
+                      ),
+                      Container(
+                        height: 314,
+                        width: 315,
+                        child: Stack(
+                          children: [
+                            Positioned(
+                              top: 0,
+                              left: 0,
+                              child: DragTarget<String>(
+                                builder: (
+                                    BuildContext context,
+                                    List<dynamic> accepted,
+                                    List<dynamic> rejected,
+                                    ) {
+                                  return Container(
+                                    height: 160,
+                                    width: 200,
+                                    child: Image.asset(_isPawnDropped
+                                        ? 'assets/chess_pawn.png'
+                                        : 'assets/bo.png'),
+                                  );
+                                },
+                                onWillAccept: (data) {
+                                  return data == _pawn;
+                                },
+                                onAccept: (data) {
+                                  _isPawnDropped = true;
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                 ),
               ),
             ),
