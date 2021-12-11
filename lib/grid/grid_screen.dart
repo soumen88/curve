@@ -73,7 +73,10 @@ class GridScreen extends HookWidget{
 
           }
           break;
+          case BoardState.PAWN_LOCATION:{
 
+          }
+          break;
         }
       },
       child: GridTile(
@@ -82,14 +85,14 @@ class GridScreen extends HookWidget{
               border: Border.all(color: Colors.black, width: 0.5)
           ),
           child: Center(
-            child: _buildGridItem(x, y),
+            child: _buildGridItem(x, y, context),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildGridItem(int x, int y) {
+  Widget _buildGridItem(int x, int y, BuildContext context) {
     switch (gridState[x][y]) {
       case BoardState.BLACK:
         return DragTarget<String>(
@@ -103,6 +106,7 @@ class GridScreen extends HookWidget{
             },
             onAccept: (data) {
               developer.log(TAG , name: "Data $data with $x and $y");
+              context.read(homeScreenProvider).updateGrid(x, y);
             },
             hitTestBehavior: HitTestBehavior.deferToChild
         );
@@ -119,15 +123,25 @@ class GridScreen extends HookWidget{
             },
             onAccept: (data) {
               developer.log(TAG , name: "Data $data with $x and $y");
+              context.read(homeScreenProvider).updateGrid(x, y);
             },
             hitTestBehavior: HitTestBehavior.deferToChild
         );
         break;
+      case BoardState.PAWN_LOCATION:{
+        return Container(
+          height: 25.0,
+          width: 25.0,
+          child: Center(
+            child: Image.asset(unSelectedPawnPath),
+          ),
+        );
+      }
+      break;
       default:
         return Text(gridState[x][y].toString());
     }
   }
-
 
   BoardState getCurrentBoardState(int x, int y){
     return gridState[x][y];

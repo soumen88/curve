@@ -33,6 +33,7 @@ class HomeScreenBloc extends ChangeNotifier{
           for(int j = 0 ; j < x; j++){
             if(j % 2 == 0){
               inner.insert(j,BoardState.WHITE);
+              //inner.insert(j,BoardState.PAWN_LOCATION);
             }
             else{
               inner.insert(j,BoardState.BLACK);
@@ -60,6 +61,19 @@ class HomeScreenBloc extends ChangeNotifier{
     } catch (e) {
       developer.log(TAG , name :'Printing out the message: $e');
     }
+  }
+
+  //record position for pawn
+  void updateGrid(int rowId, int columnId){
+    List<List<BoardState>> boardGridState = boardStatusState.currentBoardState;
+    List<BoardState> columnBoardState = boardGridState[rowId];
+    columnBoardState.removeAt(columnId);
+    columnBoardState.insert(columnId, BoardState.PAWN_LOCATION);
+    boardGridState.removeAt(rowId);
+    boardGridState.insert(rowId, columnBoardState);
+    developer.log(TAG, name: "Picked board state as $rowId and $columnId");
+    boardStatusState = new BoardStatus(boardGridState);
+    notifyListeners();
   }
 
 }
