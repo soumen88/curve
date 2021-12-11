@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:curve/home/home_screen.dart';
+import 'package:curve/home/home_screen_page.dart';
 import 'package:curve/routes/AppRouter.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
