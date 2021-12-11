@@ -4,12 +4,15 @@ import 'package:curve/constants.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
 
+import 'package:rxdart/rxdart.dart';
+
 class HomeScreenBloc extends ChangeNotifier{
   String TAG = "HomeScreenBloc";
   int rows = 0;
   int columns = 0;
   bool isGridCreated = false;
   late BoardStatus boardStatusState ;
+  BehaviorSubject<bool> willAcceptStream = new BehaviorSubject<bool>();
 
   HomeScreenBloc(){
     createGrid(gridRows, gridColumns);
