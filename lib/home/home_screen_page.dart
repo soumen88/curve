@@ -2,6 +2,7 @@ import 'package:curve/board/boardstate.dart';
 import 'package:curve/components/custom_button.dart';
 import 'package:curve/components/navbar.dart';
 import 'package:curve/constants.dart';
+import 'package:curve/grid/grid_screen.dart';
 import 'package:curve/providers/providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -39,26 +40,24 @@ class HomeScreenPage extends HookWidget{
               child: SafeArea(
                 child: Column(
                     children: [
-                      Consumer(
-                          builder : (builder, watch, child){
-                            final currentState = watch(homeScreenProvider).boardStatusState;
-                            if(currentState != null){
-                              gridState.clear();
-                              gridState = List.from(currentState.currentBoardState);
-                              developer.log(TAG , name: "Grid size "+ gridState.length.toString());
-                            }
-                            if(gridState.isNotEmpty){
-                              return _buildGameBody(gridState);
-                            }
-                            else{
-                              return Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  height: MediaQuery.of(context).size.height,
-                                  child: Center(child: CircularProgressIndicator())
-                              );
-                            }
-                          }
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          CustomButton(
+                              tap: (){
+                                developer.log(TAG, name:"Left button was tapped");
+                              },
+                              buttonText: "Left"
+                          ),
+                          CustomButton(
+                              tap: (){
+                                developer.log(TAG, name:"Right button was tapped");
+                              },
+                              buttonText: "Right"
+                          ),
+                        ],
                       ),
+                      GridScreen(),
                       StreamBuilder(
                         initialData: false,
                         stream: context.read(homeScreenProvider).willAcceptStream,
@@ -100,24 +99,42 @@ class HomeScreenPage extends HookWidget{
                           );
                         }
                       ),
+                      /*Visibility(
+                        key: Key("1"),
+                        visible: !_isPawnDropped,
+                        child: Draggable<String>(
+                          // Data is the value this Draggable stores.
+                          //data: _pawn,
+                          //This will be the original image of the pawn
+                          child: Container(
+                              height: 165.0,
+                              width: 165.0,
+                              child: Center(
+                                child: Image.asset(unSelectedPawnPath),
+                              ),
+                          ),
+                          //This will be the image that would be getting displayed when the pawn is dragged
+                          feedback: Container(
+                              height: 165.0,
+                              width: 165.0,
+                              child: Center(
+                                child: Image.asset(selectedPawnPath),
+                              ),
+                          ),
+                          //
+                          childWhenDragging: Container(),
+                          onDragCompleted: (){
+                            developer.log(TAG , name: "On drag completed");
+                            context.read(homeScreenProvider).willAcceptStream.add(true);
+                          },
+                          onDraggableCanceled: (velocity, offset){
+                            developer.log(TAG , name: "On drag cancelled");
+                            context.read(homeScreenProvider).willAcceptStream.add(false);
+                          },
+
+                        ),
+                      ),*/
                       //Drag target container
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          CustomButton(
-                              tap: (){
-                                  developer.log(TAG, name:"Left button was tapped");
-                              },
-                              buttonText: "Left"
-                          ),
-                          CustomButton(
-                              tap: (){
-                                developer.log(TAG, name:"Right button was tapped");
-                              },
-                              buttonText: "Right"
-                          ),
-                        ],
-                      ),
                       StreamBuilder(
                           initialData: false,
                           stream: context.read(homeScreenProvider).willAcceptStream,
@@ -142,9 +159,9 @@ class HomeScreenPage extends HookWidget{
                                                 : 'assets/bo.png'),
                                           );
                                         },
-                                        onWillAccept: (data) {
+                                        /*onWillAccept: (data) {
                                           return data == _pawn;
-                                        },
+                                        },*/
                                         onAccept: (data) {
                                           developer.log(TAG , name: "Data $data");
                                           _isPawnDropped = true;
