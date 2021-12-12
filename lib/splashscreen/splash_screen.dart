@@ -14,7 +14,7 @@ class SplashScreenPage extends HookWidget {
   Widget build(BuildContext context) {
     //Start home screen whenever timer is over
     useEffect((){
-      Timer(Duration(seconds: 2), () {
+      Timer(Duration(seconds: 3), () {
         context.router.replace(HomeScreenRoute());
       });
     });
