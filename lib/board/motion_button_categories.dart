@@ -18,12 +18,9 @@ class MotionButtonCategories extends HookWidget{
   Widget build(BuildContext context) {
     return Consumer(
       builder: (builder, watch, child){
-        final isTwoMoveStepsComplete = watch(homeScreenProvider).isTwoMovesComplete;
+        //List of pawn motions
         final motionButtonCategories = watch(homeScreenProvider).motionButtonCategories;
-        if(isTwoMoveStepsComplete){
-          developer.log(TAG, name: "Now remove");
 
-        }
         return Padding(
           padding: EdgeInsets.only(top: kDefaultPadding),
           child: SizedBox(

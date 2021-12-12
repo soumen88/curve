@@ -19,7 +19,7 @@ class CustomButton extends StatelessWidget {
         margin: EdgeInsets.only(left: 15, right: 15),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultPadding * 2),
-            color: kButtonColor
+            color: kCurveColorUp
         ),
         height: 50.0,
         alignment: Alignment.center,

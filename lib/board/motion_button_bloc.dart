@@ -1,6 +1,7 @@
 import 'package:curve/board/buttons.dart';
 import 'package:flutter/cupertino.dart';
 
+//Mixin to provide additional functionalities to home screen bloc
 mixin MotionButtonBloc on ChangeNotifier{
 
   late List<MotionButton> motionButtonCategories;

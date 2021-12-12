@@ -5,7 +5,6 @@ import 'package:curve/routes/AppRouter.gr.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'dart:developer' as developer;
 
 class SplashScreenPage extends HookWidget {
 
@@ -15,7 +14,7 @@ class SplashScreenPage extends HookWidget {
   Widget build(BuildContext context) {
     //Start home screen whenever timer is over
     useEffect((){
-      Timer(Duration(seconds: 1), () {
+      Timer(Duration(seconds: 2), () {
         context.router.replace(HomeScreenRoute());
       });
     });

@@ -44,7 +44,7 @@ class HomeScreenPage extends HookWidget{
         return Scaffold(
           appBar: NavBar(
             isIconVisible: false,
-            screenName: "Home Screen",
+            screenName: "Pawn Simulator",
           ),
           body: SingleChildScrollView(
             padding: EdgeInsets.all(kDefaultPadding),

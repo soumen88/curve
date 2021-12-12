@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:curve/home/home_screen_page.dart';
 import 'package:curve/routes/AppRouter.gr.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,8 +20,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-
   MyApp({Key? key}) : super(key: key);
+  //Using Auto route package for routing between the screens
   final _appRouter = AppRouter();
   String currentScreen = "Main";
   // This widget is the root of your application.

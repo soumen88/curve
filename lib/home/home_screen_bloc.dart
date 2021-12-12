@@ -11,15 +11,18 @@ import 'package:rxdart/rxdart.dart';
 
 class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
   String TAG = "HomeScreenBloc";
-  int rows = 0;
-  int columns = 0;
+  //Notifies home screen page when grid matrix is complete
   bool isGridCreated = false;
   String _pawn = "pawn";
   String get getPawnName => _pawn;
+  //Track grid and pawn location
   late BoardStatus boardStatusState;
   late Coordinate playerCurrentCoordinates;
   Directions? currentDirection;
+  //Notifies home screen page when pawn has been placed on the grid
   BehaviorSubject<bool> willAcceptStream = new BehaviorSubject<bool>();
+
+  //This flag becomes true whenever first time moves are complete
   bool isTwoMovesComplete = false;
   bool isFirstMoveComplete = false;
 
@@ -27,6 +30,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
     createGrid(gridRows, gridColumns);
   }
 
+  //When restart button is pressed re-intialize these variables
   void init(){
     isGridCreated = false;
     isTwoMovesComplete = false;
@@ -35,19 +39,16 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
     isFirstMoveComplete = false;
   }
 
-  //Draw the chess board on screen
+  //Draw chess board on screen
   void createGrid(int x, int y){
     try {
       List<List<BoardState>> prepareGameGridState = [];
-      rows = x;
-      columns = y;
       for(int i = 0 ; i < x; i++){
         List<BoardState> inner = [];
         if(i % 2 == 0){
           for(int j = 0 ; j < x; j++){
             if(j % 2 == 0){
               inner.insert(j,BoardState.WHITE);
-              //inner.insert(j,BoardState.PAWN_LOCATION);
             }
             else{
               inner.insert(j,BoardState.BLACK);
@@ -93,6 +94,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
     notifyListeners();
   }
 
+  //Move position of spawn in grid
   void traverseGrid(int currentAngle){
     //Initialising current and new row variables
     int rowId = playerCurrentCoordinates.xPosition;
@@ -227,6 +229,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
 
   }
 
+  //Move position of spawn by two spaces
   void traverseGridWithTwoMoves(int currentAngle){
     int rowId = playerCurrentCoordinates.xPosition;
     int newRowId = playerCurrentCoordinates.xPosition;
@@ -398,18 +401,18 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
 
   }
 
+  //Notifies direction of motion of pawn
   void updateDirection(int currentAngle){
-    developer.log(TAG, name: "Passed current angle as $currentAngle");
     if(currentAngle == 0 || currentAngle == 360 || currentAngle == -360){
       currentDirection = Directions.NORTH;
 
     }
     else if(currentAngle == -90 || currentAngle == 270){
-      currentDirection = Directions.EAST;
+      currentDirection = Directions.WEST;
 
     }
     else if(currentAngle == 90 || currentAngle == -270){
-      currentDirection = Directions.WEST;
+      currentDirection = Directions.EAST;
 
     }
     else if(currentAngle == 180 || currentAngle == -180){

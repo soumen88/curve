@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+//State notifier for pawn rotate movements
 class PawnMovementsBloc extends StateNotifier<AsyncValue<int?>>{
   int currentAngle = 0;
 

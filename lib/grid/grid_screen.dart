@@ -8,6 +8,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:developer' as developer;
 
+//Creating and maintaining state of grid
 class GridScreen extends HookWidget{
   List<List<BoardState>> gridState = [];
   int gridStateLength = 0;
@@ -60,12 +61,11 @@ class GridScreen extends HookWidget{
     int x, y = 0;
     x = (index / gridStateLength).floor();
     y = (index % gridStateLength);
-    //Coordinate coordinate = new Coordinate(x, y);
     return GestureDetector(
       onTap: () {
-
-        BoardState bookingState = getCurrentBoardState(x,y);
-        switch(bookingState){
+        //Tap detection on the grid item
+        BoardState boardState = getCurrentBoardState(x,y);
+        switch(boardState){
           case BoardState.WHITE:{
 
           }

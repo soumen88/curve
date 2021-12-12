@@ -9,5 +9,6 @@ const kOrangeColor = Color(0xFFf28631);
 const kCurveBoardBlack = Color(0xCF331e94);
 const kCurveBoardWhite = Color(0x4F331e94);
 const kDefaultPadding = 10.0;
+//When pawn is dragged selected pawn is displayed
 const selectedPawnPath = "assets/blue_pawn.png";
 const unSelectedPawnPath = "assets/red_pawn.png";
