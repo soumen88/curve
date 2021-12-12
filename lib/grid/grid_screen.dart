@@ -13,6 +13,7 @@ class GridScreen extends HookWidget{
   int gridStateLength = 0;
   String TAG = "GridScreen";
   late String _pawn;
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -98,7 +99,7 @@ class GridScreen extends HookWidget{
         return DragTarget<String>(
             builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
               return Container(
-                color: Colors.black45,
+                color: kCurveBoardBlack,
               );
             },
             onWillAccept: (data) {
@@ -115,7 +116,7 @@ class GridScreen extends HookWidget{
         return DragTarget<String>(
             builder: (BuildContext context, List<dynamic> accepted, List<dynamic> rejected) {
               return Container(
-                color: Colors.white60,
+                color: kCurveBoardWhite,
               );
             },
             onWillAccept: (data) {
@@ -137,8 +138,10 @@ class GridScreen extends HookWidget{
                   return Container(
                     height: 155.0,
                     width: 155.0,
-                    child:
-                    RotationTransition(
+                    decoration: BoxDecoration(
+                      color: Colors.white60 ,
+                    ),
+                    child: RotationTransition(
                       turns: new AlwaysStoppedAnimation( data! / 360),
                       child: Image.asset(unSelectedPawnPath),
                     ),

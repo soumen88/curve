@@ -10,19 +10,19 @@ mixin MotionButtonBloc on ChangeNotifier{
       MotionButton(
           id: 1,
           name: 'Left',
-          icon: 'assets/food.svg',
+          icon: 'assets/left_arrow.svg',
           isVisible : true
       ),
       MotionButton(
           id: 2,
           name: 'Right',
-          icon: 'assets/drinks.svg',
+          icon: 'assets/right_arrow.svg',
           isVisible : true
       ),
       MotionButton(
           id: 3,
           name: 'Move',
-          icon: 'assets/fruit.svg',
+          icon: 'assets/move.svg',
           isVisible : true
       ),
       MotionButton(

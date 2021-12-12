@@ -78,6 +78,9 @@ flutter:
     - chat.svg
     - drinks.svg
     - fruit.svg
+    - left_arrow.svg
+    - right_arrow.svg
+    - move.svg
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

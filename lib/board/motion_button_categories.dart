@@ -10,6 +10,10 @@ import 'dart:developer' as developer;
 class MotionButtonCategories extends HookWidget{
   int selectedIndex = 0;
   String TAG = "MotionButtonCategories";
+  final void Function(int)? onmotionSelected;
+
+  MotionButtonCategories({Key? key,this.onmotionSelected}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Consumer(
@@ -33,6 +37,7 @@ class MotionButtonCategories extends HookWidget{
                       child: GestureDetector(
                         onTap: () {
                           this.selectedIndex = index;
+                          onmotionSelected!(index);
                         },
                         child: Container(
                           alignment: Alignment.center,

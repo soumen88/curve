@@ -157,46 +157,44 @@ class HomeScreenPage extends HookWidget{
                             if(snapshot.data != null && snapshot.hasData && snapshot.data! == true){
                               return  Column(
                                 children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomButton(
-                                          tap: (){
-                                            developer.log(TAG, name:"Left button was tapped");
-                                            context.read(pawnAngleProvider.notifier).rotateLeft();
-                                            int tempAngle = currentAngle - 90;
-                                            context.read(homeScreenProvider).updateDirection(tempAngle);
-                                          },
-                                          buttonText: "Left"
-                                      ),
-                                      CustomButton(
-                                          tap: (){
-                                            developer.log(TAG, name:"Right button was tapped");
-                                            context.read(pawnAngleProvider.notifier).rotateRight();
-                                            int tempAngle = currentAngle + 90;
-                                            context.read(homeScreenProvider).updateDirection(tempAngle);
-                                          },
-                                          buttonText: "Right"
-                                      ),
-                                      CustomButton(
-                                          tap: (){
-                                            developer.log(TAG, name:"Right button was tapped");
-                                            context.read(homeScreenProvider).traverseGrid(currentAngle);
-                                          },
-                                          buttonText: "Move"
-                                      ),
-                                      Visibility(
-                                        visible: !_isTwoMoveStepsComplete,
-                                        child: CustomButton(
-                                            tap: (){
-                                              developer.log(TAG, name:"Right button was tapped");
-                                              context.read(homeScreenProvider).traverseGridWithTwoMoves(currentAngle);
-                                            },
-                                            buttonText: "Move 2 steps"
-                                        ),
-                                      ),
+                                  MotionButtonCategories(
+                                    onmotionSelected: (data){
+                                      developer.log(TAG, name: "Selection motion id $data");
+                                      // 0 for left, 1 for right, 2 for move and 3 for move 2 places
+                                      switch(data){
+                                        case 0:{
 
-                                    ],
+                                          context.read(pawnAngleProvider.notifier).rotateLeft();
+                                          int tempAngle = currentAngle - 90;
+                                          developer.log(TAG, name:"Left button was tapped with temp angle $tempAngle");
+                                          context.read(homeScreenProvider).updateDirection(tempAngle);
+                                        }
+                                        break;
+                                        case 1:{
+                                          developer.log(TAG, name:"Right button was tapped");
+                                          context.read(pawnAngleProvider.notifier).rotateRight();
+                                          int tempAngle = currentAngle + 90;
+                                          context.read(homeScreenProvider).updateDirection(tempAngle);
+                                        }
+                                        break;
+                                        case 2:{
+                                          developer.log(TAG, name:"Move button was tapped");
+                                          context.read(homeScreenProvider).traverseGrid(currentAngle);
+                                        }
+                                        break;
+                                        case 3:{
+                                          developer.log(TAG, name:"move 2 steps button was tapped");
+                                          context.read(homeScreenProvider).traverseGridWithTwoMoves(currentAngle);
+                                        }
+                                        break;
+                                        default:
+                                          break;
+                                      }
+                                    },
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: kDefaultPadding,
                                   ),
                                   CustomButton(
                                       tap: (){
@@ -208,7 +206,6 @@ class HomeScreenPage extends HookWidget{
                                       },
                                       buttonText: "Restart"
                                   ),
-                                  MotionButtonCategories(),
                                 ],
                               );
                             }

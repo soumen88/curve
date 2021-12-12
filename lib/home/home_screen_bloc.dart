@@ -21,6 +21,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
   Directions? currentDirection;
   BehaviorSubject<bool> willAcceptStream = new BehaviorSubject<bool>();
   bool isTwoMovesComplete = false;
+  bool isFirstMoveComplete = false;
 
   HomeScreenBloc(){
     createGrid(gridRows, gridColumns);
@@ -31,6 +32,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
     isTwoMovesComplete = false;
     willAcceptStream = new BehaviorSubject<bool>();
     currentDirection = null;
+    isFirstMoveComplete = false;
   }
 
   //Draw the chess board on screen
@@ -216,6 +218,10 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
       playerCurrentCoordinates.isOnEdge = false;
 
     }
+    if(!isFirstMoveComplete){
+      isFirstMoveComplete = true;
+      addOrRemoveMoveTwoStep(true);
+    }
     boardStatusState = new BoardStatus(boardGridState);
     notifyListeners();
 
@@ -313,7 +319,6 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
       playerCurrentCoordinates = new Coordinate(rowId, newColumnId);
       playerCurrentCoordinates.isOnEdge = false;
       isTwoMovesComplete = true;
-      addOrRemoveMoveTwoStep(true);
     }
     //Keep the row data same
     else if(isColumnChange){
@@ -365,7 +370,6 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
         }
       }
 
-
       //replace the index with updated one
       currentBoardRow.removeAt(index);
       currentBoardRow.insert(index, updated);
@@ -383,8 +387,11 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
       playerCurrentCoordinates = new Coordinate(newRowId, columnId);
       playerCurrentCoordinates.isOnEdge = false;
       isTwoMovesComplete = true;
-      addOrRemoveMoveTwoStep(true);
       //#endregion
+    }
+    if(!isFirstMoveComplete){
+      isFirstMoveComplete = true;
+      addOrRemoveMoveTwoStep(true);
     }
     boardStatusState = new BoardStatus(boardGridState);
     notifyListeners();
@@ -393,7 +400,7 @@ class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
 
   void updateDirection(int currentAngle){
     developer.log(TAG, name: "Passed current angle as $currentAngle");
-    if(currentAngle == 0 || currentAngle == 360){
+    if(currentAngle == 0 || currentAngle == 360 || currentAngle == -360){
       currentDirection = Directions.NORTH;
 
     }
