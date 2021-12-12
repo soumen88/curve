@@ -17,7 +17,7 @@ class HomeScreenPage extends HookWidget{
   bool _isPawnDropped = false;
   late String _pawn;
   int currentAngle = 0;
-  bool _isDragInProgress = false;
+  bool _isTwoMoveStepsComplete = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
@@ -29,7 +29,7 @@ class HomeScreenPage extends HookWidget{
         final pawnAngle = watch(pawnAngleProvider);
         final streamValue = watch(homeScreenProvider).willAcceptStream;
         final currentDirection = watch(homeScreenProvider).currentDirection;
-
+        _isTwoMoveStepsComplete = watch(homeScreenProvider).isTwoMovesComplete;
 
         streamValue.listen((value) {
           developer.log(TAG, name:" Stream value has changed "+ value.toString());
@@ -60,6 +60,7 @@ class HomeScreenPage extends HookWidget{
                                   data: (data) {
                                     final currentCoordinates = watch(homeScreenProvider).playerCurrentCoordinates;
                                     currentAngle = data!;
+
                                     return Column(
                                       children: [
                                         if(data != null)
@@ -154,33 +155,58 @@ class HomeScreenPage extends HookWidget{
                           stream: context.read(homeScreenProvider).willAcceptStream,
                           builder:  (context, snapshot) {
                             if(snapshot.data != null && snapshot.hasData && snapshot.data! == true){
-                              return  Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              return  Column(
                                 children: [
-                                  CustomButton(
-                                      tap: (){
-                                        developer.log(TAG, name:"Left button was tapped");
-                                        context.read(pawnAngleProvider.notifier).rotateLeft();
-                                        int tempAngle = currentAngle - 90;
-                                        context.read(homeScreenProvider).updateDirection(tempAngle);
-                                      },
-                                      buttonText: "Left"
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomButton(
+                                          tap: (){
+                                            developer.log(TAG, name:"Left button was tapped");
+                                            context.read(pawnAngleProvider.notifier).rotateLeft();
+                                            int tempAngle = currentAngle - 90;
+                                            context.read(homeScreenProvider).updateDirection(tempAngle);
+                                          },
+                                          buttonText: "Left"
+                                      ),
+                                      CustomButton(
+                                          tap: (){
+                                            developer.log(TAG, name:"Right button was tapped");
+                                            context.read(pawnAngleProvider.notifier).rotateRight();
+                                            int tempAngle = currentAngle + 90;
+                                            context.read(homeScreenProvider).updateDirection(tempAngle);
+                                          },
+                                          buttonText: "Right"
+                                      ),
+                                      CustomButton(
+                                          tap: (){
+                                            developer.log(TAG, name:"Right button was tapped");
+                                            context.read(homeScreenProvider).traverseGrid(currentAngle);
+                                          },
+                                          buttonText: "Move"
+                                      ),
+                                      Visibility(
+                                        visible: !_isTwoMoveStepsComplete,
+                                        child: CustomButton(
+                                            tap: (){
+                                              developer.log(TAG, name:"Right button was tapped");
+                                              context.read(homeScreenProvider).traverseGridWithTwoMoves(currentAngle);
+                                            },
+                                            buttonText: "Move 2 steps"
+                                        ),
+                                      ),
+
+                                    ],
                                   ),
                                   CustomButton(
                                       tap: (){
-                                        developer.log(TAG, name:"Right button was tapped");
-                                        context.read(pawnAngleProvider.notifier).rotateRight();
-                                        int tempAngle = currentAngle + 90;
-                                        context.read(homeScreenProvider).updateDirection(tempAngle);
+                                        developer.log(TAG, name:"Restart button was tapped");
+                                        context.read(homeScreenProvider).init();
+                                        context.read(homeScreenProvider).willAcceptStream.add(false);
+                                        context.read(homeScreenProvider).createGrid(gridRows, gridColumns);
+                                        context.read(pawnAngleProvider.notifier).startingAngle();
                                       },
-                                      buttonText: "Right"
-                                  ),
-                                  CustomButton(
-                                      tap: (){
-                                        developer.log(TAG, name:"Right button was tapped");
-                                        context.read(homeScreenProvider).traverseGrid(currentAngle);
-                                      },
-                                      buttonText: "Move"
+                                      buttonText: "Restart"
                                   ),
                                 ],
                               );

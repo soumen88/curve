@@ -7,7 +7,9 @@ class PawnMovementsBloc extends StateNotifier<AsyncValue<int?>>{
     startingAngle();
   }
 
+
   void startingAngle(){
+    currentAngle = 0;
     state = AsyncData(currentAngle);
   }
 
