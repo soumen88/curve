@@ -1,4 +1,5 @@
 import 'package:curve/board/boardstate.dart';
+import 'package:curve/board/motion_button_categories.dart';
 import 'package:curve/components/custom_button.dart';
 import 'package:curve/components/navbar.dart';
 import 'package:curve/constants.dart';
@@ -208,6 +209,7 @@ class HomeScreenPage extends HookWidget{
                                       },
                                       buttonText: "Restart"
                                   ),
+                                  MotionButtonCategories(),
                                 ],
                               );
                             }
