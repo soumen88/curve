@@ -1,6 +1,7 @@
 import 'package:curve/board/board_status.dart';
 import 'package:curve/board/boardstate.dart';
 import 'package:curve/board/directions.dart';
+import 'package:curve/board/motion_button_bloc.dart';
 import 'package:curve/constants.dart';
 import 'package:curve/home/coordinate.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'dart:developer' as developer;
 
 import 'package:rxdart/rxdart.dart';
 
-class HomeScreenBloc extends ChangeNotifier{
+class HomeScreenBloc extends ChangeNotifier with MotionButtonBloc{
   String TAG = "HomeScreenBloc";
   int rows = 0;
   int columns = 0;
@@ -86,6 +87,7 @@ class HomeScreenBloc extends ChangeNotifier{
     boardStatusState = new BoardStatus(boardGridState);
     playerCurrentCoordinates = new Coordinate(rowId, columnId);
     currentDirection = Directions.NORTH;
+    addAllButtons();
     notifyListeners();
   }
 
@@ -311,6 +313,7 @@ class HomeScreenBloc extends ChangeNotifier{
       playerCurrentCoordinates = new Coordinate(rowId, newColumnId);
       playerCurrentCoordinates.isOnEdge = false;
       isTwoMovesComplete = true;
+      addOrRemoveMoveTwoStep(true);
     }
     //Keep the row data same
     else if(isColumnChange){
@@ -380,6 +383,7 @@ class HomeScreenBloc extends ChangeNotifier{
       playerCurrentCoordinates = new Coordinate(newRowId, columnId);
       playerCurrentCoordinates.isOnEdge = false;
       isTwoMovesComplete = true;
+      addOrRemoveMoveTwoStep(true);
       //#endregion
     }
     boardStatusState = new BoardStatus(boardGridState);

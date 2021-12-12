@@ -61,7 +61,6 @@ class HomeScreenPage extends HookWidget{
                                   data: (data) {
                                     final currentCoordinates = watch(homeScreenProvider).playerCurrentCoordinates;
                                     currentAngle = data!;
-
                                     return Column(
                                       children: [
                                         if(data != null)
